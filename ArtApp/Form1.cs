@@ -89,9 +89,6 @@ namespace ArtApp {
 			textBoxPath.Text = e.NewUrl;
 		}
 	}
-	/* Треба додати:
-	 * 
-	*/
 
 
 	public class WebLoad {
