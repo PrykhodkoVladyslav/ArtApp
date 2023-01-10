@@ -19,8 +19,9 @@ namespace ArtApp {
 		public Form1() {
 			InitializeComponent();
 
-			picture = new PictureController(pictureBox);
+			picture = new PictureController();
 			picture.ChangeUrl += ChangeUrl;
+			picture.ChangePicturePath += ChangePicturePath;
 
 			apiCollection = new ApiCollection();
 
@@ -85,8 +86,12 @@ namespace ArtApp {
 		}
 
 		// Вручну створені обробники подій
-		protected void ChangeUrl(object sender, UrlEventArgs e) {
+		protected void ChangeUrl(object sender, UrlChangeEventArgs e) {
 			textBoxPath.Text = e.NewUrl;
+		}
+
+		protected void ChangePicturePath(object sender, ChangePicturePathEventArgs e) {
+			pictureBox.ImageLocation = e.NewPath;
 		}
 	}
 

@@ -10,20 +10,20 @@ namespace ArtApp {
 		protected LinkHistory linkHistory;
 		protected PictureLibrary library;
 
-		protected PictureBox pictureBox;
-
-		public delegate void ChangeUrlHandler(object sender, UrlEventArgs e);
-		public event ChangeUrlHandler ChangeUrl;
-
 		protected string source;
 		protected string regExPattern;
 
+		public delegate void ChangeUrlHandler(object sender, UrlChangeEventArgs e);
+		public event ChangeUrlHandler ChangeUrl;
+
+		//protected PictureBox pictureBox;
+		public delegate void ChangePicturePathHandler(object sender, ChangePicturePathEventArgs e);
+		public event ChangePicturePathHandler ChangePicturePath;
+
 		// Конструктори
-		public PictureController(PictureBox pictureBox) {
+		public PictureController() {
 			this.linkHistory = new LinkHistory();
 			this.library = new PictureLibrary();
-
-			this.pictureBox = pictureBox;
 
 			this.source = "";
 			this.regExPattern = "";
@@ -43,9 +43,9 @@ namespace ArtApp {
 
 		// Методи
 		protected void LoadPicture(string url) {
-			pictureBox.ImageLocation = library.GetPathByUrl(url);
+			ChangePicturePath?.Invoke(this, new ChangePicturePathEventArgs(library.GetPathByUrl(url)));
 
-			ChangeUrl?.Invoke(this, new UrlEventArgs(url));
+			ChangeUrl?.Invoke(this, new UrlChangeEventArgs(url));
 		}
 
 		protected void LoadPictureFromApi() {
@@ -86,15 +86,27 @@ namespace ArtApp {
 		}
 	}
 
-	public class UrlEventArgs : EventArgs {
+	public class UrlChangeEventArgs : EventArgs {
 		protected string newUrl;
 
-		public UrlEventArgs(string newUrl) {
+		public UrlChangeEventArgs(string newUrl) {
 			this.newUrl = newUrl;
 		}
 
 		public string NewUrl {
 			get { return newUrl; }
+		}
+	}
+
+	public class ChangePicturePathEventArgs : EventArgs {
+		protected string newPath;
+
+		public ChangePicturePathEventArgs(string newPath) {
+			this.newPath = newPath;
+		}
+
+		public string NewPath {
+			get { return newPath; }
 		}
 	}
 }
