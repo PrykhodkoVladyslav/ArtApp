@@ -57,7 +57,7 @@ namespace ArtApp {
 			CreatePictureDirectoryIfNotFound();
 
 			byte[] picture = new WebClient().DownloadData(url);
-			string name = path + index.ToString() + GetFormatWithUrl(url);
+			string name = path + index.ToString() + GetImageFormatFromUrl(url);
 			using (FileStream fs = new FileStream(name, FileMode.Create, FileAccess.Write)) {
 				fs.Write(picture, 0, picture.Length);
 			}
@@ -66,7 +66,7 @@ namespace ArtApp {
 			index++;
 		}
 
-		protected string GetFormatWithUrl(in string url) {
+		protected string GetImageFormatFromUrl(in string url) {
 			int index = url.LastIndexOf('.');
 			return url.Substring(index, url.Length - index);
 		}

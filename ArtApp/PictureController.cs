@@ -55,18 +55,20 @@ namespace ArtApp {
 		}
 
 		public void LoadPrev() {
-			//try {
-			if (linkHistory.CanPrev()) {
-				LoadPicture(linkHistory.Prev());
+			try {
+				if (linkHistory.CanPrev()) {
+					LoadPicture(linkHistory.Prev());
+				}
 			}
-			//}
+			catch (System.Net.WebException) {
+				Message.Error("Помилка", "Помилка мережі. Не вдалося завантажити зображення!");
+			}
 			//catch (Exception) {
 
 			//}
 		}
 
 		public void LoadNext() {
-			//try {
 			try {
 				if (linkHistory.CanNext()) {
 					LoadPicture(linkHistory.Next());
@@ -78,7 +80,6 @@ namespace ArtApp {
 			catch (System.Net.WebException) {
 				Message.Error("Помилка", "Помилка мережі. Не вдалося завантажити зображення!");
 			}
-			//}
 			//catch (Exception) {
 
 			//}
