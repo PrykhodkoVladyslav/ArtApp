@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -65,7 +62,7 @@ namespace ArtApp {
 		protected void SetAPIs() {
 			apiCollection.AddApi("waifu.pics", "\"url\":\"([^\"]*)\"");
 			apiCollection.AddSubApi("waifu.pics", "Neko", "https://api.waifu.pics/sfw/neko");
-			//apiCollection.AddSubApi("waifu.pics", "NSFW Neko", "https://api.waifu.pics/nsfw/neko");
+			apiCollection.AddSubApi("waifu.pics", "NSFW Neko", "https://api.waifu.pics/nsfw/neko");
 
 			apiCollection.AddApi("waifu.im", "\"url\":\"([^\"]*)\"");
 			apiCollection.AddSubApi("waifu.im", "Maid", "https://api.waifu.im/search/?included_tags=maid");
@@ -92,25 +89,6 @@ namespace ArtApp {
 
 		protected void ChangePicturePath(object sender, ChangePicturePathEventArgs e) {
 			pictureBox.ImageLocation = e.NewPath;
-		}
-	}
-
-
-	public class WebLoad {
-		public static string LoadHTML(string url) {
-			HttpWebRequest myHttwebrequest = (HttpWebRequest)HttpWebRequest.Create(url);
-			HttpWebResponse myHttpWebresponse = (HttpWebResponse)myHttwebrequest.GetResponse();
-			StreamReader strm = new StreamReader(myHttpWebresponse.GetResponseStream());
-			return strm.ReadToEnd();
-		}
-
-		public static string GetPictureUrl(string source, string regExPattern) {
-			string htmlText = WebLoad.LoadHTML(source);
-
-			Regex regex = new Regex(regExPattern, RegexOptions.IgnoreCase);
-			Match match = regex.Match(htmlText);
-
-			return match.Groups[1].Value;
 		}
 	}
 

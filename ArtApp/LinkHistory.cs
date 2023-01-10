@@ -44,9 +44,13 @@ namespace ArtApp {
 			return index - 1 >= 0;
 		}
 
-		//public string Curent() {
-		//	return urlList[index];
-		//}
+		public bool IsCurentExist() {
+			return 0 <= index && index < urlList.Count;
+		}
+
+		public string Curent() {
+			return urlList[index];
+		}
 
 		public bool Contains(string url) {
 			return urlList.Contains(url);

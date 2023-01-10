@@ -57,9 +57,11 @@
     <Compile Include="LinkHistory.cs" />
     <Compile Include="PictureController.cs" />
     <Compile Include="PictureLibrary.cs" />
+    <Compile Include="PictureNameGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization.cs" />
+    <Compile Include="WebLoad.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

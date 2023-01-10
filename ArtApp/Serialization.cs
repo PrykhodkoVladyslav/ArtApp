@@ -106,8 +106,7 @@ namespace ArtApp {
 				bw.Write(pair.Key);
 				bw.Write(pair.Value);
 			}
-			bw.Write(path);
-			bw.Write(index);
+			nameGenerator.Save(bw);
 		}
 
 		public void Load(string path) {
@@ -129,6 +128,37 @@ namespace ArtApp {
 
 				pictures.Add(key, value);
 			}
+			nameGenerator.Load(br);
+		}
+	}
+
+	public partial class PictureNameGenerator {
+		public void Save(string path) {
+			using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write)) {
+				Save(fs);
+			}
+		}
+		public void Save(FileStream fs) {
+			using (BinaryWriter bw = new BinaryWriter(fs)) {
+				Save(bw);
+			}
+		}
+		public void Save(BinaryWriter bw) {
+			bw.Write(path);
+			bw.Write(index);
+		}
+
+		public void Load(string path) {
+			using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
+				Load(fs);
+			}
+		}
+		public void Load(FileStream fs) {
+			using (BinaryReader br = new BinaryReader(fs)) {
+				Load(br);
+			}
+		}
+		public void Load(BinaryReader br) {
 			path = br.ReadString();
 			index = br.ReadInt32();
 		}

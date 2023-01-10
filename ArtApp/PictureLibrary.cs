@@ -5,6 +5,9 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Net;
+using System.Security.Policy;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace ArtApp {
 	public interface IPictureLibrary {
@@ -13,13 +16,11 @@ namespace ArtApp {
 
 	public partial class PictureLibrary : IPictureLibrary, IWithSerialization {
 		protected Dictionary<string, string> pictures;
-		protected string path;
-		protected int index;
+		protected PictureNameGenerator nameGenerator;
 
 		public PictureLibrary() {
 			pictures = new Dictionary<string, string>();
-			path = "picture\\";
-			index = 0;
+			nameGenerator = new PictureNameGenerator();
 		}
 
 		public string GetPathByUrl(string url) {
@@ -27,7 +28,7 @@ namespace ArtApp {
 				Download(url);
 			}
 
-			if (!IsValidLocalPath(pictures[url])) {
+			if (!IsValidPicturePath(pictures[url])) {
 				Redownload(url);
 			}
 
@@ -38,14 +39,8 @@ namespace ArtApp {
 			return pictures.ContainsKey(url);
 		}
 
-		protected bool IsValidLocalPath(string url) {
-			try {
-				using (new FileStream(url, FileMode.Open, FileAccess.Read)) { }
-				return true;
-			}
-			catch (System.IO.FileNotFoundException) {
-				return false;
-			}
+		protected bool IsValidPicturePath(string url) {
+			return File.Exists(url);
 		}
 
 		protected void Redownload(in string url) {
@@ -57,13 +52,16 @@ namespace ArtApp {
 			CreatePictureDirectoryIfNotFound();
 
 			byte[] picture = new WebClient().DownloadData(url);
-			string name = path + index.ToString() + GetImageFormatFromUrl(url);
+			string name = nameGenerator.CreatePictureName(GetImageFormatFromUrl(url));
+			SaveByteArrayToFile(picture, name);
+
+			pictures.Add(url, name);
+		}
+
+		protected void SaveByteArrayToFile(byte[] picture, string name) {
 			using (FileStream fs = new FileStream(name, FileMode.Create, FileAccess.Write)) {
 				fs.Write(picture, 0, picture.Length);
 			}
-
-			pictures.Add(url, name);
-			index++;
 		}
 
 		protected string GetImageFormatFromUrl(in string url) {
@@ -72,7 +70,7 @@ namespace ArtApp {
 		}
 
 		protected void CreatePictureDirectoryIfNotFound() {
-			DirectoryInfo directory = new DirectoryInfo(Environment.CurrentDirectory + "\\" + path);
+			DirectoryInfo directory = new DirectoryInfo(Environment.CurrentDirectory + "\\" + nameGenerator.Path);
 			if (!directory.Exists)
 				directory.Create();
 		}

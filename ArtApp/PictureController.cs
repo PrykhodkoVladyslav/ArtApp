@@ -16,7 +16,6 @@ namespace ArtApp {
 		public delegate void ChangeUrlHandler(object sender, UrlChangeEventArgs e);
 		public event ChangeUrlHandler ChangeUrl;
 
-		//protected PictureBox pictureBox;
 		public delegate void ChangePicturePathHandler(object sender, ChangePicturePathEventArgs e);
 		public event ChangePicturePathHandler ChangePicturePath;
 
