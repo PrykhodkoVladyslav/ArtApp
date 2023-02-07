@@ -6,7 +6,18 @@ using System.Threading.Tasks;
 using System.IO;
 
 namespace ArtApp {
-	public partial class LinkHistory : IWithSerialization {
+	public interface ILinkHistory : IWithSerialization {
+		void Add(string url);
+		string Next();
+		string Prev();
+		bool CanNext();
+		bool CanPrev();
+		bool IsCurentExist();
+		string Curent();
+		bool Contains(string url);
+	}
+
+	public partial class LinkHistory : ILinkHistory {
 		protected List<string> urlList;
 		int index;
 
@@ -55,5 +66,10 @@ namespace ArtApp {
 		public bool Contains(string url) {
 			return urlList.Contains(url);
 		}
+	}
+
+	public class ErrorLinkHistoryMoveException : Exception {
+		public ErrorLinkHistoryMoveException() : this("Error LinkHistory move exception") { }
+		public ErrorLinkHistoryMoveException(string message) : base(message) { }
 	}
 }

@@ -10,11 +10,11 @@ using System.Reflection;
 using System.Xml.Linq;
 
 namespace ArtApp {
-	public interface IPictureLibrary {
-		string GetPathByUrl(string url);
+	public interface IPictureLibrary : IWithSerialization {
+		string GetLocalPathByUrl(string url);
 	}
 
-	public partial class PictureLibrary : IPictureLibrary, IWithSerialization {
+	public partial class PictureLibrary : IPictureLibrary {
 		protected Dictionary<string, string> pictures;
 		protected PictureNameGenerator nameGenerator;
 
@@ -23,7 +23,7 @@ namespace ArtApp {
 			nameGenerator = new PictureNameGenerator();
 		}
 
-		public string GetPathByUrl(string url) {
+		public string GetLocalPathByUrl(string url) {
 			if (!Contains(url)) {
 				Download(url);
 			}
@@ -74,5 +74,15 @@ namespace ArtApp {
 			if (!directory.Exists)
 				directory.Create();
 		}
+	}
+
+	public class PictureNotFoundInPictureLibraryException : Exception {
+		public PictureNotFoundInPictureLibraryException() : this("Picture not found in PictureLibrary exception") { }
+		public PictureNotFoundInPictureLibraryException(string message) : base(message) { }
+	}
+
+	public class PictureIsAvailableInPictureLibraryException : Exception {
+		public PictureIsAvailableInPictureLibraryException() : this("Picture is available in PictureLibrary exception") { }
+		public PictureIsAvailableInPictureLibraryException(string message) : base(message) { }
 	}
 }

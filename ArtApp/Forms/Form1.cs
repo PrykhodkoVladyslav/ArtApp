@@ -4,14 +4,17 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using ArtApp.Api;
+
 namespace ArtApp {
 	public partial class Form1 : Form {
-		PictureController picture;
-		ApiCollection apiCollection;
+		IPictureController picture;
+		IApiCollection apiCollection;
 
 		public Form1() {
 			InitializeComponent();
@@ -84,11 +87,19 @@ namespace ArtApp {
 
 		// Вручну створені обробники подій
 		protected void ChangeUrl(object sender, UrlChangeEventArgs e) {
-			textBoxPath.Text = e.NewUrl;
+			textBoxPath.Invoke(
+				(MethodInvoker)delegate {
+					textBoxPath.Text = e.NewUrl;
+				}
+			);
 		}
 
 		protected void ChangePicturePath(object sender, ChangePicturePathEventArgs e) {
-			pictureBox.ImageLocation = e.NewPath;
+			pictureBox.Invoke(
+				(MethodInvoker)delegate {
+					pictureBox.ImageLocation = e.NewPath;
+				}
+			);
 		}
 	}
 

@@ -4,11 +4,26 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading;
+
+using ArtApp.Web;
+using System.ComponentModel;
 
 namespace ArtApp {
-	public partial class PictureController : IWithSerialization {
-		protected LinkHistory linkHistory;
-		protected PictureLibrary library;
+	public interface IPictureController : IWithSerialization {
+		string RegExPattern { get; set; }
+		string Source { get; set; }
+
+		event PictureController.ChangePicturePathHandler ChangePicturePath;
+		event PictureController.ChangeUrlHandler ChangeUrl;
+
+		void LoadNext();
+		void LoadPrev();
+	}
+
+	public partial class PictureController : IPictureController {
+		protected ILinkHistory linkHistory;
+		protected IPictureLibrary library;
 
 		protected string source;
 		protected string regExPattern;
@@ -18,6 +33,9 @@ namespace ArtApp {
 
 		public delegate void ChangePicturePathHandler(object sender, ChangePicturePathEventArgs e);
 		public event ChangePicturePathHandler ChangePicturePath;
+
+		protected delegate bool Can();
+		protected delegate string Move();
 
 		// Конструктори
 		public PictureController() {
@@ -41,40 +59,40 @@ namespace ArtApp {
 
 
 		// Методи
-		protected void LoadPicture(string url) {
-			ChangePicturePath?.Invoke(this, new ChangePicturePathEventArgs(library.GetPathByUrl(url)));
+		protected void ChangePicture(string url) {
+			ChangePicturePath?.Invoke(this, new ChangePicturePathEventArgs(library.GetLocalPathByUrl(url)));
 
 			ChangeUrl?.Invoke(this, new UrlChangeEventArgs(url));
 		}
 
 		protected void LoadPictureFromApi() {
-			string url = WebLoad.GetPictureUrl(source, regExPattern);
-			LoadPicture(url);
+			string url = WebLoad.GetPictureUrlFromApi(source, regExPattern);
+			ChangePicture(url);
 			linkHistory.Add(url);
 		}
 
 		public void LoadPrev() {
-			try {
-				if (linkHistory.CanPrev()) {
-					LoadPicture(linkHistory.Prev());
-				}
-			}
-			catch (System.Net.WebException) {
-				Message.Error("Помилка", "Помилка мережі. Не вдалося завантажити зображення!");
-			}
-			//catch (Exception) {
-
-			//}
+			LoadPicture(linkHistory.CanPrev, linkHistory.Prev);
 		}
 
 		public void LoadNext() {
+			LoadPicture(linkHistory.CanNext, linkHistory.Next);
+		}
+
+		protected void LoadPicture(Can canChange, Move moveMethod) {
+			// Закривання програми до завершення процесу викликає вийнятки які треба вирішити
+			new Thread(
+				() => {
+					lock (this) {
+						LoadPictureWithExceptionHandling(canChange, moveMethod);
+					}
+				}
+			).Start();
+		}
+
+		protected void LoadPictureWithExceptionHandling(Can canChange, Move moveMethod) {
 			try {
-				if (linkHistory.CanNext()) {
-					LoadPicture(linkHistory.Next());
-				}
-				else {
-					LoadPictureFromApi();
-				}
+				LoadPictureMethod(canChange, moveMethod);
 			}
 			catch (System.Net.WebException) {
 				Message.Error("Помилка", "Помилка мережі. Не вдалося завантажити зображення!");
@@ -83,8 +101,16 @@ namespace ArtApp {
 
 			//}
 		}
-	}
 
+		protected void LoadPictureMethod(Can canChange, Move moveMethod) {
+			if (canChange()) {
+				ChangePicture(moveMethod());
+			}
+			else {
+				LoadPictureFromApi();
+			}
+		}
+	}
 	public class UrlChangeEventArgs : EventArgs {
 		protected string newUrl;
 

@@ -1,12 +1,12 @@
 ﻿namespace ArtApp {
-	public interface IPictureNameGenerator {
+	public interface IPictureNameGenerator : IWithSerialization {
 		string Path { get; set; }
 		int Index { get; }
 
 		string CreatePictureName(in string pictureExtension);
 	}
 
-	public partial class PictureNameGenerator : IPictureNameGenerator, IWithSerialization {
+	public partial class PictureNameGenerator : IPictureNameGenerator {
 		protected string path;
 		protected int index;
 

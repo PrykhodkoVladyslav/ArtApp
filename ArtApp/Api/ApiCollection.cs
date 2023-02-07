@@ -4,8 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArtApp {
-	class ApiCollection {
+using ArtApp;
+
+namespace ArtApp.Api {
+	interface IApiCollection {
+		SubApi this[int index] { get; }
+
+		List<SubApi> SubApis { get; }
+
+		void AddApi(string name, string pattern);
+		void AddSubApi(string apiName, string subApiName, string url);
+	}
+
+	class ApiCollection : IApiCollection {
 		protected List<Api> apis;
 
 		public ApiCollection() {
@@ -113,5 +124,25 @@ namespace ArtApp {
 			get { return url; }
 			set { url = value; }
 		}
+	}
+
+	public abstract class ApiException : Exception {
+		public ApiException() : this("API exception") { }
+		public ApiException(string message) : base(message) { }
+	}
+
+	public class ApiThereAlreadyIsException : ApiException {
+		public ApiThereAlreadyIsException() : this("API there already is exception") { }
+		public ApiThereAlreadyIsException(string message) : base(message) { }
+	}
+
+	public class ApiNotFoundException : ApiException {
+		public ApiNotFoundException() : this("API with this name not found exception") { }
+		public ApiNotFoundException(string message) : base(message) { }
+	}
+
+	public class SubApiThereAlreadyIsException : ApiException {
+		public SubApiThereAlreadyIsException() : this("SubAPI there already is exception") { }
+		public SubApiThereAlreadyIsException(string message) : base(message) { }
 	}
 }
