@@ -7,7 +7,6 @@ using System.IO;
 using System.Threading;
 
 using ArtApp.Web;
-using System.ComponentModel;
 
 namespace ArtApp {
 	public interface IPictureController : IWithSerialization {
