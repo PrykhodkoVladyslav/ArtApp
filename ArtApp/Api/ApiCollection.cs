@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using ArtApp;
 
 namespace ArtApp.Api {
-	interface IApiCollection {
+	public interface IApiCollection {
 		SubApi this[int index] { get; }
 
 		List<SubApi> SubApis { get; }
@@ -16,7 +16,7 @@ namespace ArtApp.Api {
 		void AddSubApi(string apiName, string subApiName, string url);
 	}
 
-	class ApiCollection : IApiCollection {
+	public class ApiCollection : IApiCollection {
 		protected List<Api> apis;
 
 		public ApiCollection() {
@@ -63,7 +63,7 @@ namespace ArtApp.Api {
 		}
 	}
 
-	class Api {
+	public class Api {
 		protected string name;
 		protected string pattern;
 		protected List<SubApi> subApis;
@@ -96,7 +96,7 @@ namespace ArtApp.Api {
 		}
 	}
 
-	class SubApi {
+	public class SubApi {
 		protected string name;
 		protected Api parent;
 		protected string url;

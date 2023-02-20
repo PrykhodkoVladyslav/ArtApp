@@ -86,7 +86,7 @@ namespace ArtApp {
 						LoadPictureWithExceptionHandling(canChange, moveMethod);
 					}
 				}
-			).Start();
+			) { IsBackground = true }.Start();
 		}
 
 		protected void LoadPictureWithExceptionHandling(Can canChange, Move moveMethod) {

@@ -14,7 +14,7 @@ using ArtApp.Api;
 namespace ArtApp {
 	public partial class Form1 : Form {
 		IPictureController picture;
-		IApiCollection apiCollection;
+		protected IApiCollection apiCollection;
 
 		public Form1() {
 			InitializeComponent();
@@ -81,7 +81,7 @@ namespace ArtApp {
 		protected void FillComboBoxSource() {
 			comboBoxSource.Items.Clear();
 			foreach (SubApi item in apiCollection.SubApis) {
-				comboBoxSource.Items.Add(string.Format("{0} ({1})", item.SubApiName, item.ApiName));
+				comboBoxSource.Items.Add($"{item.SubApiName} ({item.ApiName})");
 			}
 		}
 
