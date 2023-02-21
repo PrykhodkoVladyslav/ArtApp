@@ -4,163 +4,123 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Xml;
+using System.Reflection;
 
 namespace ArtApp {
 	public interface IWithSerialization {
-		void Save(string path);
-		void Save(FileStream fs);
-		void Save(BinaryWriter bw);
-
-		void Load(string path);
-		void Load(FileStream fs);
-		void Load(BinaryReader br);
+		XmlNode CreateXMLNode(in XmlDocument xmlDocument);
+		void LoadDataFromXmlNode(XmlNode node);
 	}
 
 	public partial class PictureController {
-		public void Save(string path) {
-			using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write)) {
-				Save(fs);
-			}
-		}
-		public void Save(FileStream fs) {
-			using (BinaryWriter bw = new BinaryWriter(fs)) {
-				Save(bw);
-			}
-		}
-		public void Save(BinaryWriter bw) {
-			linkHistory.Save(bw);
-			library.Save(bw);
-			bw.Write(source);
+		public XmlNode CreateXMLNode(in XmlDocument xmlDocument) {
+			XmlNode pictureControllerNode = xmlDocument.CreateElement("PictureController");
+
+			pictureControllerNode.AppendChild(linkHistory.CreateXMLNode(xmlDocument));
+			pictureControllerNode.AppendChild(library.CreateXMLNode(xmlDocument));
+
+			XmlNode sourceNode = xmlDocument.CreateElement("Source");
+			sourceNode.InnerText = source;
+			pictureControllerNode.AppendChild(sourceNode);
+
+			XmlNode regExPatternNode = xmlDocument.CreateElement("RegExPattern");
+			regExPatternNode.InnerText = regExPattern;
+			pictureControllerNode.AppendChild(regExPatternNode);
+
+			return pictureControllerNode;
 		}
 
-		public void Load(string path) {
-			using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
-				Load(fs);
-			}
-		}
-		public void Load(FileStream fs) {
-			using (BinaryReader br = new BinaryReader(fs)) {
-				Load(br);
-			}
-		}
-		public void Load(BinaryReader br) {
-			linkHistory.Load(br);
-			library.Load(br);
-			source = br.ReadString();
+		public void LoadDataFromXmlNode(XmlNode node) {
+			linkHistory.LoadDataFromXmlNode(node["LinkHistory"]);
+			library.LoadDataFromXmlNode(node["PictureLibrary"]);
+			source = node["Source"].InnerText;
+			regExPattern = node["RegExPattern"].InnerText;
 		}
 	}
 
 	public partial class LinkHistory {
-		public void Save(string path) {
-			using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write)) {
-				Save(fs);
-			}
-		}
-		public void Save(FileStream fs) {
-			using (BinaryWriter bw = new BinaryWriter(fs)) {
-				Save(bw);
-			}
-		}
-		public void Save(BinaryWriter bw) {
-			bw.Write(urlList.Count);
+		public XmlNode CreateXMLNode(in XmlDocument xmlDocument) {
+			XmlNode linkHistoryNode = xmlDocument.CreateElement("LinkHistory");
+
+			XmlNode urlListNode = xmlDocument.CreateElement("URLList");
 			foreach (string url in urlList) {
-				bw.Write(url);
+				XmlNode urlNode = xmlDocument.CreateElement("URL");
+				urlNode.InnerText = url;
+				urlListNode.AppendChild(urlNode);
 			}
-			bw.Write(index);
+			linkHistoryNode.AppendChild(urlListNode);
+
+			XmlNode indexNode = xmlDocument.CreateElement("Index");
+			indexNode.InnerText = index.ToString();
+			linkHistoryNode.AppendChild(indexNode);
+
+			return linkHistoryNode;
 		}
 
-		public void Load(string path) {
-			using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
-				Load(fs);
-			}
-		}
-		public void Load(FileStream fs) {
-			using (BinaryReader br = new BinaryReader(fs)) {
-				Load(br);
-			}
-		}
-		public void Load(BinaryReader br) {
-			int urlListCount = br.ReadInt32();
+		public void LoadDataFromXmlNode(XmlNode node) {
 			urlList.Clear();
-			for (int i = 0; i < urlListCount; i++) {
-				urlList.Add(br.ReadString());
+			foreach (XmlNode urlListChild in node["URLList"].ChildNodes) {
+				urlList.Add(urlListChild.InnerText);
 			}
-			index = br.ReadInt32();
+
+			index = Convert.ToInt32(node["Index"].InnerText);
 		}
 	}
 
 	public partial class PictureLibrary {
-		public void Save(string path) {
-			using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write)) {
-				Save(fs);
+		public XmlNode CreateXMLNode(in XmlDocument xmlDocument) {
+			XmlNode pictureLibraryNode = xmlDocument.CreateElement("PictureLibrary");
+
+			XmlNode picturesNode = xmlDocument.CreateElement("Pictures");
+			foreach (KeyValuePair<string, string> picturePair in pictures) {
+				XmlNode pictureNode = xmlDocument.CreateElement("Picture");
+
+				XmlNode urlNode = xmlDocument.CreateElement("URL");
+				urlNode.InnerText = picturePair.Key;
+				pictureNode.AppendChild(urlNode);
+
+				XmlNode pathNode = xmlDocument.CreateElement("Path");
+				pathNode.InnerText = picturePair.Value;
+				pictureNode.AppendChild(pathNode);
+
+				picturesNode.AppendChild(pictureNode);
 			}
-		}
-		public void Save(FileStream fs) {
-			using (BinaryWriter bw = new BinaryWriter(fs)) {
-				Save(bw);
-			}
-		}
-		public void Save(BinaryWriter bw) {
-			bw.Write(pictures.Count);
-			foreach (KeyValuePair<string, string> pair in pictures) {
-				bw.Write(pair.Key);
-				bw.Write(pair.Value);
-			}
-			nameGenerator.Save(bw);
+			pictureLibraryNode.AppendChild(picturesNode);
+
+			pictureLibraryNode.AppendChild(nameGenerator.CreateXMLNode(xmlDocument));
+
+			return pictureLibraryNode;
 		}
 
-		public void Load(string path) {
-			using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
-				Load(fs);
-			}
-		}
-		public void Load(FileStream fs) {
-			using (BinaryReader br = new BinaryReader(fs)) {
-				Load(br);
-			}
-		}
-		public void Load(BinaryReader br) {
-			int picturesCount = br.ReadInt32();
+		public void LoadDataFromXmlNode(XmlNode node) {
 			pictures.Clear();
-			for (int i = 0; i < picturesCount; i++) {
-				string key = br.ReadString();
-				string value = br.ReadString();
-
-				pictures.Add(key, value);
+			foreach (XmlNode picturesChild in node["Pictures"].ChildNodes) {
+				pictures.Add(picturesChild["URL"].InnerText, picturesChild["Path"].InnerText);
 			}
-			nameGenerator.Load(br);
+
+			nameGenerator.LoadDataFromXmlNode(node["PictureNameGenerator"]);
 		}
 	}
 
 	public partial class PictureNameGenerator {
-		public void Save(string path) {
-			using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write)) {
-				Save(fs);
-			}
-		}
-		public void Save(FileStream fs) {
-			using (BinaryWriter bw = new BinaryWriter(fs)) {
-				Save(bw);
-			}
-		}
-		public void Save(BinaryWriter bw) {
-			bw.Write(path);
-			bw.Write(index);
+		public XmlNode CreateXMLNode(in XmlDocument xmlDocument) {
+			XmlNode pictureNameGeneratorNode = xmlDocument.CreateElement("PictureNameGenerator");
+
+			XmlNode pathNode = xmlDocument.CreateElement("Path");
+			pathNode.InnerText = path;
+			pictureNameGeneratorNode.AppendChild(pathNode);
+
+			XmlNode indexNode = xmlDocument.CreateElement("Index");
+			indexNode.InnerText = index.ToString();
+			pictureNameGeneratorNode.AppendChild(indexNode);
+
+			return pictureNameGeneratorNode;
 		}
 
-		public void Load(string path) {
-			using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
-				Load(fs);
-			}
-		}
-		public void Load(FileStream fs) {
-			using (BinaryReader br = new BinaryReader(fs)) {
-				Load(br);
-			}
-		}
-		public void Load(BinaryReader br) {
-			path = br.ReadString();
-			index = br.ReadInt32();
+		public void LoadDataFromXmlNode(XmlNode node) {
+			path = node["Path"].InnerText;
+			index = Convert.ToInt32(node["Index"].InnerText);
 		}
 	}
 }

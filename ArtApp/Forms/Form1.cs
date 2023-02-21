@@ -8,7 +8,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Xml;
 using ArtApp.Api;
 
 namespace ArtApp {
@@ -31,7 +31,9 @@ namespace ArtApp {
 			Form1_SizeChanged(this, new EventArgs());
 
 			try {
-				picture.Load("save.dat");
+				XmlDocument xmlDocument = new XmlDocument();
+				xmlDocument.Load("save.xml");
+				picture.LoadDataFromXmlNode(xmlDocument.FirstChild);
 			}
 			catch (System.IO.FileNotFoundException) { }
 
@@ -39,7 +41,9 @@ namespace ArtApp {
 		}
 
 		private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
-			picture.Save("save.dat");
+			XmlDocument xmlDocument = new XmlDocument();
+			xmlDocument.AppendChild(picture.CreateXMLNode(xmlDocument));
+			xmlDocument.Save("save.xml");
 		}
 
 		private void Form1_SizeChanged(object sender, EventArgs e) {
