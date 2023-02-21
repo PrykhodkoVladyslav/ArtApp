@@ -13,8 +13,8 @@ namespace ArtApp {
 		string RegExPattern { get; set; }
 		string Source { get; set; }
 
-		event PictureController.ChangePicturePathHandler ChangePicturePath;
-		event PictureController.ChangeUrlHandler ChangeUrl;
+		event PictureController.ChangePicturePathHandler PicturePathChanged;
+		event PictureController.ChangeUrlHandler UrlChanged;
 
 		void LoadNext();
 		void LoadPrev();
@@ -28,10 +28,10 @@ namespace ArtApp {
 		protected string regExPattern;
 
 		public delegate void ChangeUrlHandler(object sender, UrlChangeEventArgs e);
-		public event ChangeUrlHandler ChangeUrl;
+		public event ChangeUrlHandler UrlChanged;
 
 		public delegate void ChangePicturePathHandler(object sender, ChangePicturePathEventArgs e);
-		public event ChangePicturePathHandler ChangePicturePath;
+		public event ChangePicturePathHandler PicturePathChanged;
 
 		protected delegate void MoveMethod();
 
@@ -58,9 +58,9 @@ namespace ArtApp {
 
 		// Методи
 		protected void ChangePicture(string url) {
-			ChangePicturePath?.Invoke(this, new ChangePicturePathEventArgs(library.GetLocalPathByUrl(url)));
+			PicturePathChanged?.Invoke(this, new ChangePicturePathEventArgs(library.GetLocalPathByUrl(url)));
 
-			ChangeUrl?.Invoke(this, new UrlChangeEventArgs(url));
+			UrlChanged?.Invoke(this, new UrlChangeEventArgs(url));
 		}
 
 		protected void LoadPictureFromApi() {

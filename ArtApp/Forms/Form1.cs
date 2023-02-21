@@ -20,8 +20,8 @@ namespace ArtApp {
 			InitializeComponent();
 
 			picture = new PictureController();
-			picture.ChangeUrl += ChangeUrl;
-			picture.ChangePicturePath += ChangePicturePath;
+			picture.UrlChanged += ChangeUrl;
+			picture.PicturePathChanged += ChangePicturePath;
 
 			apiCollection = new ApiCollection();
 
