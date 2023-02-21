@@ -7,7 +7,7 @@ using System.IO;
 
 namespace ArtApp {
 	public interface ILinkHistory : IWithSerialization {
-		void Add(string url);
+		void AddToEnd(string url);
 		string Next();
 		string Prev();
 		bool CanNext();
@@ -26,23 +26,24 @@ namespace ArtApp {
 			index = -1;
 		}
 
-		public void Add(string url) {
+		public void AddToEnd(string url) {
+			if (index != urlList.Count - 1)
+				throw new LinkHistoryIndexIsNotAtTheEndOfHistoryException();
+
 			urlList.Add(url);
 			index++;
 		}
 
 		public string Next() {
-			if (!CanNext()) {
+			if (!CanNext())
 				throw new ErrorLinkHistoryMoveException();
-			}
 
 			return urlList[++index];
 		}
 
 		public string Prev() {
-			if (!CanPrev()) {
+			if (!CanPrev())
 				throw new ErrorLinkHistoryMoveException();
-			}
 
 			return urlList[--index];
 		}
@@ -66,6 +67,11 @@ namespace ArtApp {
 		public bool Contains(string url) {
 			return urlList.Contains(url);
 		}
+	}
+
+	public class LinkHistoryIndexIsNotAtTheEndOfHistoryException : Exception {
+		public LinkHistoryIndexIsNotAtTheEndOfHistoryException() : this("LinkHistory index is not at the end of history exception") { }
+		public LinkHistoryIndexIsNotAtTheEndOfHistoryException(string message) : base(message) { }
 	}
 
 	public class ErrorLinkHistoryMoveException : Exception {

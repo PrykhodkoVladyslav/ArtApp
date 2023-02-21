@@ -67,16 +67,11 @@ namespace ArtApp {
 		protected void LoadPictureFromApi() {
 			string url = WebLoad.GetPictureUrlFromApi(source, regExPattern);
 			ChangePicture(url);
-			linkHistory.Add(url);
+			linkHistory.AddToEnd(url);
 		}
 
-		public void LoadPrev() {
-			LoadPicture(linkHistory.CanPrev, linkHistory.Prev);
-		}
-
-		public void LoadNext() {
-			LoadPicture(linkHistory.CanNext, linkHistory.Next);
-		}
+		public void LoadPrev() => LoadPicture(linkHistory.CanPrev, linkHistory.Prev);
+		public void LoadNext() => LoadPicture(linkHistory.CanNext, linkHistory.Next);
 
 		protected void LoadPicture(Can canChange, Move moveMethod) {
 			// Закривання програми до завершення процесу викликає вийнятки які треба вирішити
@@ -86,7 +81,7 @@ namespace ArtApp {
 						LoadPictureWithExceptionHandling(canChange, moveMethod);
 					}
 				}
-			) { IsBackground = true }.Start();
+			).Start();
 		}
 
 		protected void LoadPictureWithExceptionHandling(Can canChange, Move moveMethod) {
@@ -96,9 +91,6 @@ namespace ArtApp {
 			catch (System.Net.WebException) {
 				Message.Error("Помилка", "Помилка мережі. Не вдалося завантажити зображення!");
 			}
-			//catch (Exception) {
-
-			//}
 		}
 
 		protected void LoadPictureMethod(Can canChange, Move moveMethod) {

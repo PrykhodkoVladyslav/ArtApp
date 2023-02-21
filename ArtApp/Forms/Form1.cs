@@ -13,7 +13,7 @@ using ArtApp.Api;
 
 namespace ArtApp {
 	public partial class Form1 : Form {
-		IPictureController picture;
+		protected IPictureController picture;
 		protected IApiCollection apiCollection;
 
 		public Form1() {
@@ -61,7 +61,7 @@ namespace ArtApp {
 			picture.RegExPattern = subApi.Pattern;
 		}
 
-
+		// Методи
 		protected void SetAPIs() {
 			apiCollection.AddApi("waifu.pics", "\"url\":\"([^\"]*)\"");
 			apiCollection.AddSubApi("waifu.pics", "Neko", "https://api.waifu.pics/sfw/neko");
