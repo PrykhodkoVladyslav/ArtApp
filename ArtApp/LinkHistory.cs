@@ -19,7 +19,7 @@ namespace ArtApp {
 
 	public partial class LinkHistory : ILinkHistory {
 		protected List<string> urlList;
-		int index;
+		protected int index;
 
 		public LinkHistory() {
 			urlList = new List<string>();
