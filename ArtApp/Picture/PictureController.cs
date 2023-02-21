@@ -33,8 +33,7 @@ namespace ArtApp {
 		public delegate void ChangePicturePathHandler(object sender, ChangePicturePathEventArgs e);
 		public event ChangePicturePathHandler ChangePicturePath;
 
-		protected delegate bool Can();
-		protected delegate string Move();
+		protected delegate void MoveMethod();
 
 		// Конструктори
 		public PictureController() {
@@ -70,38 +69,45 @@ namespace ArtApp {
 			linkHistory.AddToEnd(url);
 		}
 
-		public void LoadPrev() => LoadPicture(linkHistory.CanPrev, linkHistory.Prev);
-		public void LoadNext() => LoadPicture(linkHistory.CanNext, linkHistory.Next);
+		public void LoadPrev() => LoadPicture(LoadPrevPictureMethod);
+		public void LoadNext() => LoadPicture(LoadNextPictureMethod);
 
-		protected void LoadPicture(Can canChange, Move moveMethod) {
+		protected void LoadPicture(MoveMethod moveMethod) {
 			// Закривання програми до завершення процесу викликає вийнятки які треба вирішити
 			new Thread(
 				() => {
 					lock (this) {
-						LoadPictureWithExceptionHandling(canChange, moveMethod);
+						LoadPictureWithExceptionHandling(moveMethod);
 					}
 				}
 			).Start();
 		}
 
-		protected void LoadPictureWithExceptionHandling(Can canChange, Move moveMethod) {
+		protected void LoadPictureWithExceptionHandling(MoveMethod moveMethod) {
 			try {
-				LoadPictureMethod(canChange, moveMethod);
+				moveMethod();
 			}
 			catch (System.Net.WebException) {
 				Message.Error("Помилка", "Помилка мережі. Не вдалося завантажити зображення!");
 			}
 		}
 
-		protected void LoadPictureMethod(Can canChange, Move moveMethod) {
-			if (canChange()) {
-				ChangePicture(moveMethod());
+		protected void LoadPrevPictureMethod() {
+			if (linkHistory.CanPrev()) {
+				ChangePicture(linkHistory.Prev());
+			}
+		}
+
+		protected void LoadNextPictureMethod() {
+			if (linkHistory.CanNext()) {
+				ChangePicture(linkHistory.Next());
 			}
 			else {
 				LoadPictureFromApi();
 			}
 		}
 	}
+
 	public class UrlChangeEventArgs : EventArgs {
 		protected string newUrl;
 
