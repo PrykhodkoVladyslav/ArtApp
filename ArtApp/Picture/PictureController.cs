@@ -76,16 +76,14 @@ namespace ArtApp {
 			// Закривання програми до завершення процесу викликає вийнятки які треба вирішити
 			new Thread(
 				() => {
-					lock (this) {
-						LoadPictureWithExceptionHandling(moveMethod);
-					}
+					LoadPictureWithExceptionHandling(moveMethod);
 				}
 			).Start();
 		}
 
 		protected void LoadPictureWithExceptionHandling(MoveMethod moveMethod) {
 			try {
-				moveMethod();
+				lock (this) { moveMethod(); }
 			}
 			catch (System.Net.WebException) {
 				Message.Error("Помилка", "Помилка мережі. Не вдалося завантажити зображення!");
