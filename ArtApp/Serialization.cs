@@ -10,7 +10,7 @@ using System.Reflection;
 namespace ArtApp {
 	public interface IWithSerialization {
 		XmlNode CreateXMLNode(in XmlDocument xmlDocument);
-		void LoadDataFromXmlNode(XmlNode node);
+		void LoadDataFromXmlNode(in XmlNode node);
 	}
 
 	public partial class PictureController {
@@ -31,7 +31,7 @@ namespace ArtApp {
 			return pictureControllerNode;
 		}
 
-		public void LoadDataFromXmlNode(XmlNode node) {
+		public void LoadDataFromXmlNode(in XmlNode node) {
 			linkHistory.LoadDataFromXmlNode(node["LinkHistory"]);
 			library.LoadDataFromXmlNode(node["PictureLibrary"]);
 			source = node["Source"].InnerText;
@@ -58,7 +58,7 @@ namespace ArtApp {
 			return linkHistoryNode;
 		}
 
-		public void LoadDataFromXmlNode(XmlNode node) {
+		public void LoadDataFromXmlNode(in XmlNode node) {
 			urlList.Clear();
 			foreach (XmlNode urlListChild in node["URLList"].ChildNodes) {
 				urlList.Add(urlListChild.InnerText);
@@ -93,7 +93,7 @@ namespace ArtApp {
 			return pictureLibraryNode;
 		}
 
-		public void LoadDataFromXmlNode(XmlNode node) {
+		public void LoadDataFromXmlNode(in XmlNode node) {
 			pictures.Clear();
 			foreach (XmlNode picturesChild in node["Pictures"].ChildNodes) {
 				pictures.Add(picturesChild["URL"].InnerText, picturesChild["Path"].InnerText);
@@ -118,7 +118,7 @@ namespace ArtApp {
 			return pictureNameGeneratorNode;
 		}
 
-		public void LoadDataFromXmlNode(XmlNode node) {
+		public void LoadDataFromXmlNode(in XmlNode node) {
 			path = node["Path"].InnerText;
 			index = Convert.ToInt32(node["Index"].InnerText);
 		}

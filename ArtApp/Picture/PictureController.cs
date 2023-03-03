@@ -69,9 +69,7 @@ namespace ArtApp {
 		protected void LoadPicture(MoveMethod moveMethod) {
 			// Закривання програми до завершення процесу викликає вийнятки які треба вирішити
 			new Thread(
-				() => {
-					LoadPictureWithExceptionHandling(moveMethod);
-				}
+				() => { LoadPictureWithExceptionHandling(moveMethod); }
 			).Start();
 		}
 
