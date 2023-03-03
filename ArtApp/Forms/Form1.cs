@@ -20,8 +20,7 @@ namespace ArtApp {
 			InitializeComponent();
 
 			picture = new PictureController();
-			picture.UrlChanged += ChangeUrl;
-			picture.PicturePathChanged += ChangePicturePath;
+			picture.PictureChanged += ChangePicture;
 
 			apiCollection = new ApiCollection();
 
@@ -90,18 +89,15 @@ namespace ArtApp {
 		}
 
 		// Вручну створені обробники подій
-		protected void ChangeUrl(object sender, UrlChangeEventArgs e) {
-			textBoxPath.Invoke(
-				(MethodInvoker)delegate {
-					textBoxPath.Text = e.NewUrl;
-				}
-			);
-		}
-
-		protected void ChangePicturePath(object sender, ChangePicturePathEventArgs e) {
+		protected void ChangePicture(object sender, ChangePictureEventArgs e) {
 			pictureBox.Invoke(
 				(MethodInvoker)delegate {
 					pictureBox.ImageLocation = e.NewPath;
+				}
+			);
+			textBoxPath.Invoke(
+				(MethodInvoker)delegate {
+					textBoxPath.Text = e.NewUrl;
 				}
 			);
 		}

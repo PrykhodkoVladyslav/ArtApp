@@ -13,8 +13,7 @@ namespace ArtApp {
 		string RegExPattern { get; set; }
 		string Source { get; set; }
 
-		event PictureController.ChangePicturePathHandler PicturePathChanged;
-		event PictureController.ChangeUrlHandler UrlChanged;
+		event PictureController.ChangePictureHandler PictureChanged;
 
 		void LoadNext();
 		void LoadPrev();
@@ -27,11 +26,8 @@ namespace ArtApp {
 		protected string source;
 		protected string regExPattern;
 
-		public delegate void ChangeUrlHandler(object sender, UrlChangeEventArgs e);
-		public event ChangeUrlHandler UrlChanged;
-
-		public delegate void ChangePicturePathHandler(object sender, ChangePicturePathEventArgs e);
-		public event ChangePicturePathHandler PicturePathChanged;
+		public delegate void ChangePictureHandler(object sender, ChangePictureEventArgs e);
+		public event ChangePictureHandler PictureChanged;
 
 		protected delegate void MoveMethod();
 
@@ -58,9 +54,7 @@ namespace ArtApp {
 
 		// Методи
 		protected void ChangePicture(string url) {
-			PicturePathChanged?.Invoke(this, new ChangePicturePathEventArgs(library.GetLocalPathByUrl(url)));
-
-			UrlChanged?.Invoke(this, new UrlChangeEventArgs(url));
+			PictureChanged?.Invoke(this, new ChangePictureEventArgs(url, library.GetLocalPathByUrl(url)));
 		}
 
 		protected void LoadPictureFromApi() {
@@ -108,23 +102,17 @@ namespace ArtApp {
 		}
 	}
 
-	public class UrlChangeEventArgs : EventArgs {
+	public class ChangePictureEventArgs : EventArgs {
 		protected string newUrl;
+		protected string newPath;
 
-		public UrlChangeEventArgs(string newUrl) {
+		public ChangePictureEventArgs(string newUrl, string newPath) {
 			this.newUrl = newUrl;
+			this.newPath = newPath;
 		}
 
 		public string NewUrl {
 			get { return newUrl; }
-		}
-	}
-
-	public class ChangePicturePathEventArgs : EventArgs {
-		protected string newPath;
-
-		public ChangePicturePathEventArgs(string newPath) {
-			this.newPath = newPath;
 		}
 
 		public string NewPath {
