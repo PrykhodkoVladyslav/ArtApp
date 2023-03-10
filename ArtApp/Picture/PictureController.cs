@@ -47,6 +47,10 @@ namespace ArtApp {
 			set { regExPattern = value ?? throw new ArgumentNullException("regExPattern"); }
 		}
 
+		public bool IsProcessingInAnotherThreads {
+			get { return threadsCounter != 0; }
+		}
+
 
 		// Методи
 		protected void ChangePicture(string url) {
@@ -63,7 +67,6 @@ namespace ArtApp {
 		public void LoadNext() => LoadPicture(LoadNextPictureMethod);
 
 		protected void LoadPicture(MoveMethod moveMethod) {
-			// Закривання програми до завершення процесу викликає вийнятки які треба вирішити
 			new Thread(
 				() => {
 					LoadPictureUsingAnotherThread(moveMethod);

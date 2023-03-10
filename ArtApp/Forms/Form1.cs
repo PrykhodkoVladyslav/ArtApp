@@ -40,6 +40,12 @@ namespace ArtApp {
 		}
 
 		private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
+			if (picture is PictureController pictureController && pictureController.IsProcessingInAnotherThreads) {
+				Message.Error("Помилка", "Процес перегортання ще не виконано до кінця, зачекайте завершення");
+				e.Cancel = true;
+				return;
+			}
+
 			XmlDocument xmlDocument = new XmlDocument();
 			xmlDocument.AppendChild(picture.CreateXMLNode(xmlDocument));
 			xmlDocument.Save("save.xml");
