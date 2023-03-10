@@ -39,20 +39,12 @@ namespace ArtApp {
 		// Властивості
 		public string Source {
 			get { return source; }
-			set {
-				if (value == null)
-					throw new ArgumentNullException("source");
-				source = value;
-			}
+			set { source = value ?? throw new ArgumentNullException("source"); }
 		}
 
 		public string RegExPattern {
 			get { return regExPattern; }
-			set {
-				if (value == null)
-					throw new ArgumentNullException("regExPattern");
-				regExPattern = value;
-			}
+			set { regExPattern = value ?? throw new ArgumentNullException("regExPattern"); }
 		}
 
 
@@ -74,15 +66,19 @@ namespace ArtApp {
 			// Закривання програми до завершення процесу викликає вийнятки які треба вирішити
 			new Thread(
 				() => {
-					Interlocked.Increment(ref threadsCounter);
-					try {
-						LoadPictureWithExceptionHandling(moveMethod);
-					}
-					finally {
-						Interlocked.Decrement(ref threadsCounter);
-					}
+					LoadPictureUsingAnotherThread(moveMethod);
 				}
 			).Start();
+		}
+
+		protected void LoadPictureUsingAnotherThread(MoveMethod moveMethod) {
+			Interlocked.Increment(ref threadsCounter);
+			try {
+				LoadPictureWithExceptionHandling(moveMethod);
+			}
+			finally {
+				Interlocked.Decrement(ref threadsCounter);
+			}
 		}
 
 		protected void LoadPictureWithExceptionHandling(MoveMethod moveMethod) {
