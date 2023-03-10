@@ -13,6 +13,8 @@ using ArtApp.Api;
 
 namespace ArtApp {
 	public partial class Form1 : Form {
+		protected readonly string saveXmlFilePath = "save.xml";
+
 		protected IPictureController picture;
 		protected IApiCollection apiCollection;
 
@@ -31,7 +33,7 @@ namespace ArtApp {
 
 			try {
 				XmlDocument xmlDocument = new XmlDocument();
-				xmlDocument.Load("save.xml");
+				xmlDocument.Load(saveXmlFilePath);
 				picture.LoadDataFromXmlNode(xmlDocument.FirstChild);
 			}
 			catch (System.IO.FileNotFoundException) { }
@@ -48,7 +50,7 @@ namespace ArtApp {
 
 			XmlDocument xmlDocument = new XmlDocument();
 			xmlDocument.AppendChild(picture.CreateXMLNode(xmlDocument));
-			xmlDocument.Save("save.xml");
+			xmlDocument.Save(saveXmlFilePath);
 		}
 
 		private void Form1_SizeChanged(object sender, EventArgs e) {
