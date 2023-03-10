@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtApp", "ArtApp\ArtApp.csproj", "{61FC872D-BA61-4439-91FF-4739D7EDF31F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtAppWPF", "ArtAppWPF\ArtAppWPF.csproj", "{42F3B23D-5157-447D-B3F3-0426D5245A04}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{61FC872D-BA61-4439-91FF-4739D7EDF31F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61FC872D-BA61-4439-91FF-4739D7EDF31F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61FC872D-BA61-4439-91FF-4739D7EDF31F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42F3B23D-5157-447D-B3F3-0426D5245A04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42F3B23D-5157-447D-B3F3-0426D5245A04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42F3B23D-5157-447D-B3F3-0426D5245A04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42F3B23D-5157-447D-B3F3-0426D5245A04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
