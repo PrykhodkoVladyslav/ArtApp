@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Xml;
-using System.Reflection;
 
 namespace ArtApp {
 	public interface IWithSerialization {
@@ -15,6 +13,9 @@ namespace ArtApp {
 
 	public partial class PictureController {
 		public XmlNode CreateXMLNode(in XmlDocument xmlDocument) {
+			if (IsProcessingInAnotherThreads)
+				throw new TreadsWordIsNotCompletedException();
+
 			XmlNode pictureControllerNode = xmlDocument.CreateElement("PictureController");
 
 			pictureControllerNode.AppendChild(linkHistory.CreateXMLNode(xmlDocument));

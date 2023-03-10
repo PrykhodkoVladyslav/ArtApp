@@ -126,4 +126,9 @@ namespace ArtApp {
 			get { return newPath; }
 		}
 	}
+
+	public class TreadsWordIsNotCompletedException : Exception {
+		public TreadsWordIsNotCompletedException() : this("Treads word is not completed exception") { }
+		public TreadsWordIsNotCompletedException(string message) : base(message) { }
+	}
 }
