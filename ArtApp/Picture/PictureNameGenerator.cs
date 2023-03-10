@@ -1,4 +1,6 @@
-﻿namespace ArtApp {
+﻿using System;
+
+namespace ArtApp {
 	public interface IPictureNameGenerator : IWithSerialization {
 		string Path { get; set; }
 		int Index { get; }
@@ -14,7 +16,7 @@
 
 		public string Path {
 			get { return path; }
-			set { path = value; }
+			set { path = value ?? throw new ArgumentNullException("path"); }
 		}
 		public int Index {
 			get { return index; }
