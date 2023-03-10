@@ -15,13 +15,10 @@ namespace ArtApp {
 	}
 
 	public partial class PictureLibrary : IPictureLibrary {
-		protected Dictionary<string, string> pictures;
-		protected PictureNameGenerator nameGenerator;
+		protected Dictionary<string, string> pictures = new Dictionary<string, string>();
+		protected PictureNameGenerator nameGenerator = new PictureNameGenerator();
 
-		public PictureLibrary() {
-			pictures = new Dictionary<string, string>();
-			nameGenerator = new PictureNameGenerator();
-		}
+		public PictureLibrary() { }
 
 		public string GetLocalPathByUrl(string url) {
 			if (!Contains(url)) {

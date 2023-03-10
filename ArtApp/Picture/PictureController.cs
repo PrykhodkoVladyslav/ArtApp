@@ -20,11 +20,13 @@ namespace ArtApp {
 	}
 
 	public partial class PictureController : IPictureController {
-		protected ILinkHistory linkHistory;
-		protected IPictureLibrary library;
+		protected ILinkHistory linkHistory = new LinkHistory();
+		protected IPictureLibrary library = new PictureLibrary();
 
-		protected string source;
-		protected string regExPattern;
+		protected string source = "";
+		protected string regExPattern = "";
+
+		protected int threadsCounter = 0;
 
 		public delegate void ChangePictureHandler(object sender, ChangePictureEventArgs e);
 		public event ChangePictureHandler PictureChanged;
@@ -32,13 +34,7 @@ namespace ArtApp {
 		protected delegate void MoveMethod();
 
 		// Конструктори
-		public PictureController() {
-			this.linkHistory = new LinkHistory();
-			this.library = new PictureLibrary();
-
-			this.source = "";
-			this.regExPattern = "";
-		}
+		public PictureController() { }
 
 		// Властивості
 		public string Source {

@@ -7,13 +7,10 @@
 	}
 
 	public partial class PictureNameGenerator : IPictureNameGenerator {
-		protected string path;
-		protected int index;
+		protected string path = "picture\\";
+		protected int index = 0;
 
-		public PictureNameGenerator() {
-			path = "picture\\";
-			index = 0;
-		}
+		public PictureNameGenerator() { }
 
 		public string Path {
 			get { return path; }

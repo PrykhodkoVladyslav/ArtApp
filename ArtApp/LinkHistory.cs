@@ -18,13 +18,10 @@ namespace ArtApp {
 	}
 
 	public partial class LinkHistory : ILinkHistory {
-		protected List<string> urlList;
-		protected int index;
+		protected List<string> urlList = new List<string>();
+		protected int index = -1;
 
-		public LinkHistory() {
-			urlList = new List<string>();
-			index = -1;
-		}
+		public LinkHistory() { }
 
 		public void AddToEnd(string url) {
 			if (index != urlList.Count - 1)
