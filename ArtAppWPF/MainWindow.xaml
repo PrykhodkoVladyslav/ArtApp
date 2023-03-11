@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="ArtApp" Height="650" Width="800" Closing="Window_Closing">
 
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="29"/>
@@ -27,6 +28,8 @@
             <TextBox Grid.Column="3" x:Name="TextBlockUrl" IsReadOnly="True"/>
         </Grid>
 
-        <Image Grid.Row="1" x:Name="Art"></Image>
+        <Image Grid.Row="1" x:Name="Art">
+            <RenderOptions.BitmapScalingMode>Fant</RenderOptions.BitmapScalingMode>
+        </Image>
     </Grid>
 </Window>

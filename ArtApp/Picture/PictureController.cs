@@ -77,7 +77,7 @@ namespace ArtApp {
 		protected void LoadPictureUsingAnotherThread(MoveMethod moveMethod) {
 			Interlocked.Increment(ref threadsCounter);
 			try {
-				LoadPictureWithExceptionHandling(moveMethod);
+				lock (this) { LoadPictureWithExceptionHandling(moveMethod); }
 			}
 			finally {
 				Interlocked.Decrement(ref threadsCounter);
@@ -86,7 +86,7 @@ namespace ArtApp {
 
 		protected void LoadPictureWithExceptionHandling(MoveMethod moveMethod) {
 			try {
-				lock (this) { moveMethod(); }
+				moveMethod();
 			}
 			catch (System.Net.WebException) {
 				Message.Error("Помилка", "Помилка мережі. Не вдалося завантажити зображення!");

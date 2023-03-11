@@ -104,11 +104,13 @@ namespace ArtAppWPF {
 		// Вручну створені обробники подій
 		protected void ChangePicture(object sender, ChangePictureEventArgs e) {
 			Application.Current.Dispatcher.Invoke(
-				delegate {
-					Art.Source = new BitmapImage(new Uri(PathEditor.GetFullPathByRelationPath(e.NewPath)));
-					TextBlockUrl.Text = e.NewUrl;
-				}
+				() => ChangePicture(e.NewPath, e.NewUrl)
 			);
+		}
+
+		protected void ChangePicture(string imagePath, string imageUrl) {
+			Art.Source = new BitmapImage(new Uri(PathEditor.GetFullPathByRelationPath(imagePath)));
+			TextBlockUrl.Text = imageUrl;
 		}
 	}
 
