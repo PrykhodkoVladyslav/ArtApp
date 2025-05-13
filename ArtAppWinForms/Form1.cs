@@ -1,24 +1,16 @@
-п»їusing Core.Api;
+using Core.Api;
 using Core.Picture;
-using System;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using System.Xml;
 
-namespace ArtAppWPF;
+namespace ArtAppWinForms;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window {
+public partial class Form1 : Form {
 	protected readonly string saveXmlFilePath = "save.xml";
 
 	protected IPictureController picture;
 	protected IApiCollection apiCollection;
 
-	public MainWindow() {
+	public Form1() {
 		InitializeComponent();
 
 		picture = new PictureController();
@@ -30,19 +22,21 @@ public partial class MainWindow : Window {
 		SetAPIs();
 		FillComboBoxSource();
 
+		Form1_SizeChanged(this, new EventArgs());
+
 		try {
 			XmlDocument xmlDocument = new XmlDocument();
 			xmlDocument.Load(saveXmlFilePath);
 			picture.LoadDataFromXmlNode(xmlDocument.FirstChild);
 		}
-		catch (System.IO.FileNotFoundException) { }
+		catch (FileNotFoundException) { }
 
 		ComboBoxSource.SelectedIndex = 0;
 	}
 
-	private void Window_Closing(object sender, CancelEventArgs e) {
+	private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
 		if (picture is PictureController pictureController && pictureController.IsProcessingInAnotherThreads) {
-			Message.Error("РџРѕРјРёР»РєР°", "РџСЂРѕС†РµСЃ РїРµСЂРµРіРѕСЂС‚Р°РЅРЅСЏ С‰Рµ РЅРµ РІРёРєРѕРЅР°РЅРѕ РґРѕ РєС–РЅС†СЏ, Р·Р°С‡РµРєР°Р№С‚Рµ Р·Р°РІРµСЂС€РµРЅРЅСЏ");
+			Message.Error("Помилка", "Процес перегортання ще не виконано до кінця, зачекайте завершення");
 			e.Cancel = true;
 			return;
 		}
@@ -52,21 +46,25 @@ public partial class MainWindow : Window {
 		xmlDocument.Save(saveXmlFilePath);
 	}
 
-	private void ButtonPrev_Click(object sender, RoutedEventArgs e) {
+	private void Form1_SizeChanged(object sender, EventArgs e) {
+		PictureBox.Size = new Size(Width - PictureBox.Location.X * 2, Height - 15 - (PictureBox.Location.Y) * 2);
+	}
+	private void ButtonPrev_Click(object sender, EventArgs e) {
 		picture.LoadPrev();
 	}
 
-	private void ButtonNext_Click(object sender, RoutedEventArgs e) {
+	private void ButtonNext_Click(object sender, EventArgs e) {
 		picture.LoadNext();
 	}
 
-	private void ComboBoxSource_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+	private void BomboBoxSource_SelectedIndexChanged(object sender, EventArgs e) {
 		SubApi subApi = apiCollection[ComboBoxSource.SelectedIndex];
 
 		picture.Source = subApi.Url;
 		picture.RegExPattern = subApi.Pattern;
 	}
 
+	// Методи
 	protected void SetAPIs() {
 		apiCollection.AddApi("waifu.pics", "\"url\":\"([^\"]*)\"");
 		apiCollection.AddSubApi("waifu.pics", "Neko", "https://api.waifu.pics/sfw/neko");
@@ -91,17 +89,19 @@ public partial class MainWindow : Window {
 	}
 
 	protected void ChangePicture(object? sender, ChangePictureEventArgs e) {
-		Application.Current.Dispatcher.Invoke(
-			() => ChangePicture(e.NewPath, e.NewUrl)
+		PictureBox.Invoke(
+			(MethodInvoker)delegate {
+				PictureBox.ImageLocation = e.NewPath;
+			}
+		);
+		TextBoxPath.Invoke(
+			(MethodInvoker)delegate {
+				TextBoxPath.Text = e.NewUrl;
+			}
 		);
 	}
 
-	protected void ChangePicture(string imagePath, string imageUrl) {
-		Art.Source = new BitmapImage(new Uri(PathEditor.GetFullPathByRelationPath(imagePath)));
-		TextBlockUrl.Text = imageUrl;
-	}
-
 	private void OnWebException(object? sender, EventArgs e) {
-		Message.Error("РџРѕРјРёР»РєР°", "РџРѕРјРёР»РєР° РјРµСЂРµР¶С–. РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё Р·РѕР±СЂР°Р¶РµРЅРЅСЏ!");
+		Message.Error("Помилка", "Помилка мережі. Не вдалося завантажити зображення!");
 	}
 }
